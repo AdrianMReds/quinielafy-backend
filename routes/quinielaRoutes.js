@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { createQuiniela } = require("../controllers/quinielaController");
+const {
+  createQuiniela,
+  getQuinielas,
+  updateQuiniela,
+} = require("../controllers/quinielaController");
 
-router.post("/", createQuiniela);
+router.route("/").get(getQuinielas).post(createQuiniela);
+router.route("/:id").put(updateQuiniela);
 
 module.exports = router;
