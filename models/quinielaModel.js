@@ -14,6 +14,17 @@ const quinielaSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

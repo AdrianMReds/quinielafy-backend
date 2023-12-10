@@ -6,7 +6,9 @@ const {
   updateQuiniela,
 } = require("../controllers/quinielaController");
 
-router.route("/").get(getQuinielas).post(createQuiniela);
-router.route("/:id").put(updateQuiniela);
+const { protect } = require("../middleware/authMiddleware");
+
+router.route("/").get(protect, getQuinielas).post(protect, createQuiniela);
+router.route("/:id").put(protect, updateQuiniela);
 
 module.exports = router;

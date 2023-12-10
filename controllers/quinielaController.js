@@ -11,7 +11,7 @@ const uniqueId = () => {
 //@route GET /api/quinielas
 //@access Private
 const getQuinielas = asyncHandler(async (req, res) => {
-  const quinielas = await Quiniela.find({});
+  const quinielas = await Quiniela.find({ users: { $in: [req.user.id] } });
 
   res.status(200).json(quinielas);
 });
@@ -22,11 +22,11 @@ const getQuinielas = asyncHandler(async (req, res) => {
 const createQuiniela = asyncHandler(async (req, res) => {
   if (!req.body.name) {
     res.status(400);
-    throw new Error("Please add a name to the quiniela");
+    throw new Error("Agrega un nombre a la quiniela");
   }
   if (!req.body.entranceMoney) {
     res.status(400);
-    throw new Error("Please tell if there is a price");
+    throw new Error("Agregué un monto de entrada");
   }
   const quinielaid = uniqueId();
 
@@ -34,6 +34,8 @@ const createQuiniela = asyncHandler(async (req, res) => {
     name: req.body.name,
     entranceMoney: req.body.entranceMoney,
     entranceCode: quinielaid,
+    admin: req.user.id,
+    users: [req.user.id],
   });
   res.status(200).json(quiniela);
 });
@@ -42,11 +44,23 @@ const createQuiniela = asyncHandler(async (req, res) => {
 //@route PUT /api/quinielas
 //@access Private
 const updateQuiniela = asyncHandler(async (req, res) => {
-  const goal = Quiniela.findById(req.params.id);
+  const quiniela = Quiniela.findById(req.params.id);
 
-  if (!goal) {
+  if (!quiniela) {
     res.status(400);
     throw new Error("No se encontró esa quiniela");
+  }
+
+  //Check for user
+  if (!req.user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Make sure the logged in user matches the quiniela user
+  if (quiniela.user.toString() !== req.user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
   }
 
   const quinielaActualizada = await Quiniela.findByIdAndUpdate(
