@@ -12,11 +12,11 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     birthday,
-    sex,
+    // sex,
     country,
     state,
     city,
-    favoriteTeam,
+    // favoriteTeam,
   } = req.body;
 
   if (
@@ -24,11 +24,11 @@ const registerUser = asyncHandler(async (req, res) => {
     !email ||
     !password ||
     !birthday ||
-    !sex ||
+    // !sex ||
     !country ||
     !state ||
-    !city ||
-    !favoriteTeam
+    !city
+    // !favoriteTeam
   ) {
     res.status(400);
     throw new Error("Agrega todos los campos al usuario");
@@ -38,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     res.status(400);
-    throw new Error("Ese usuario ya existe");
+    throw new Error("Ya existe un usuario con ese correo");
   }
 
   const salt = await bcrypt.genSalt();
@@ -49,11 +49,11 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
     birthday,
-    sex,
+    // sex,
     country,
     state,
     city,
-    favoriteTeam,
+    // favoriteTeam,
     admin: false,
     quinielas: [],
   });

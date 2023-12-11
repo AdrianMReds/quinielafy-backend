@@ -10,12 +10,12 @@ const userSchema = mongoose.Schema(
     },
     password: { type: String, required: [true, "Agrega un password"] },
     birthday: { type: Date, required: true },
-    sex: { type: String, required: true },
+    // sex: { type: String, required: true },
     country: { type: String, required: true },
     state: { type: String, required: true },
     city: { type: String, required: true },
-    favoriteTeam: { type: String, required: true },
-    admin: { type: Boolean, required: true },
+    // favoriteTeam: { type: String, required: true },
+    admin: { type: Boolean, default: false },
     quinielas: [
       {
         type: mongoose.Schema.Types.ObjectId,
