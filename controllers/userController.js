@@ -82,7 +82,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.json({
+    res.status(200).json({
       _id: user.id,
       name: user.name,
       email: user.email,
@@ -92,8 +92,6 @@ const loginUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Credenciales inválidas");
   }
-
-  res.status(200).json({ message: "Usuario login" });
 });
 
 //@desc Obtener información de usuario
