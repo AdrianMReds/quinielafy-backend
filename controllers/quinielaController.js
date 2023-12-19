@@ -7,6 +7,16 @@ const uniqueId = () => {
   return dateString + randomness;
 };
 
+const checkIdsArray = (ids, userid) => {
+  let contains = false;
+  ids.forEach((element) => {
+    if (element.toString() === userid) {
+      contains = true;
+    }
+  });
+  return contains;
+};
+
 //@desc Mostrar quinielas
 //@route GET /api/quinielas
 //@access Private
@@ -14,6 +24,32 @@ const getQuinielas = asyncHandler(async (req, res) => {
   const quinielas = await Quiniela.find({ users: { $in: [req.user.id] } });
 
   res.status(200).json(quinielas);
+});
+
+//@desc Mostrar quiniela
+//@route GET /api/quinielas/{id}
+//@access Private
+const getQuinielaData = asyncHandler(async (req, res) => {
+  const quiniela = await Quiniela.findById(req.params.id).exec();
+
+  if (!quiniela) {
+    res.status(400);
+    throw new Error("No se encontró esa quiniela");
+  }
+
+  //Check for user
+  if (!req.user) {
+    res.status(401);
+    throw new Error("Usuario no encontrado");
+  }
+
+  // Make sure the logged in user matches the quiniela user
+  if (!checkIdsArray(quiniela.users, req.user.id)) {
+    res.status(401);
+    throw new Error("Usuario no autorizado");
+  }
+
+  res.status(200).json(quiniela);
 });
 
 //@desc Crear quiniela
@@ -41,7 +77,7 @@ const createQuiniela = asyncHandler(async (req, res) => {
 });
 
 //@desc Actualizar quiniela
-//@route PUT /api/quinielas
+//@route PUT /api/quinielas/{id}
 //@access Private
 const updateQuiniela = asyncHandler(async (req, res) => {
   const quiniela = Quiniela.findById(req.params.id);
@@ -71,4 +107,9 @@ const updateQuiniela = asyncHandler(async (req, res) => {
   res.status(200).json(quinielaActualizada);
 });
 
-module.exports = { getQuinielas, createQuiniela, updateQuiniela };
+module.exports = {
+  getQuinielas,
+  createQuiniela,
+  updateQuiniela,
+  getQuinielaData,
+};
