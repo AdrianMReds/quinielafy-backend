@@ -25,6 +25,26 @@ const quinielaSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    tournament: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tournament",
+      required: true,
+    },
+    predictions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Prediction",
+      },
+    ],
+    leaderboard: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        points: Number,
+      },
+    ],
   },
   { timestamps: true }
 );
