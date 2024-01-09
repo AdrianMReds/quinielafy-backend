@@ -21,6 +21,7 @@ const checkIdsArray = (ids, userid) => {
 //@route GET /api/quinielas
 //@access Private
 const getQuinielas = asyncHandler(async (req, res) => {
+  //TODO: Checar req.user ???
   const quinielas = await Quiniela.find({ users: { $in: [req.user.id] } });
 
   res.status(200).json(quinielas);
@@ -64,6 +65,13 @@ const createQuiniela = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Agregué un monto de entrada");
   }
+
+  //Check for user
+  if (!req.user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
   const quinielaid = uniqueId();
 
   const quiniela = await Quiniela.create({
