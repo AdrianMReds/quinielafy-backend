@@ -30,7 +30,11 @@ const createTournament = asyncHandler(async (req, res) => {
     throw new Error("Agrega un nombre al torneo");
   }
 
-  console.log(req.user);
+  //Check for user
+  if (!req.user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
 
   // Make sure the logged in user is an admin
   if (!req.user.admin) {
@@ -41,7 +45,7 @@ const createTournament = asyncHandler(async (req, res) => {
 
   const tournament = await Tournament.create({
     name: req.body.name,
-    matcher: [],
+    matches: [],
     results: [],
   });
   res.status(200).json(tournament);

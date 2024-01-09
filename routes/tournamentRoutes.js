@@ -6,7 +6,6 @@ const {
   getTournaments,
 } = require("../controllers/tournamentController");
 
-// TODO: Crear un protect para que solo administradores puedan manipular cualquier información de torneos
 const { protect } = require("../middleware/authMiddleware");
 
 router.route("/").post(protect, createTournament).get(protect, getTournaments);

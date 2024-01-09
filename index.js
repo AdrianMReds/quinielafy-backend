@@ -18,6 +18,7 @@ app.use(express.urlencoded());
 app.use("/api/usuarios", require("./routes/userRoutes"));
 app.use("/api/quinielas", require("./routes/quinielaRoutes"));
 app.use("/api/torneos", require("./routes/tournamentRoutes"));
+app.use("/api/partidos", require("./routes/matchRoutes"));
 
 app.use(errorHandler);
 
