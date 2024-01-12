@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const matchSchema = mongoose.Schema(
   {
     team1: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Team",
       required: true,
     },
     team2: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Team",
       required: true,
     },
     date: {

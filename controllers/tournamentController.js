@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Tournament = require("../models/tournamentModel");
+const Team = require("../models/teamModel");
+const Match = require("../models/matchModel");
 
 //@desc Ver torneos
 //@route GET /api/torneos
@@ -30,6 +32,32 @@ const createTournament = asyncHandler(async (req, res) => {
     throw new Error("Agrega un nombre al torneo");
   }
 
+  const { name, matches, teams, results } = req.body;
+
+  if (teams) {
+    const teamExistenceChecks = await Promise.all(
+      teams.map((teamId) => Team.exists({ _id: teamId }))
+    );
+
+    if (teamExistenceChecks.includes(null)) {
+      return res
+        .status(400)
+        .json({ error: "Al menos uno de los equipos no existe." });
+    }
+  }
+
+  if (matches) {
+    const matchExistenceChecks = await Promise.all(
+      matches.map((matchId) => Match.exists({ _id: matchId }))
+    );
+
+    if (matchExistenceChecks.includes(null)) {
+      return res
+        .status(400)
+        .json({ error: "Al menos uno de los partidos no existe." });
+    }
+  }
+
   //Check for user
   if (!req.user) {
     res.status(401);
@@ -44,16 +72,17 @@ const createTournament = asyncHandler(async (req, res) => {
   }
 
   const tournament = await Tournament.create({
-    name: req.body.name,
-    matches: [],
-    results: [],
+    name,
+    matches: matches ?? [],
+    teams: teams ?? [],
+    results: results ?? [],
   });
   res.status(200).json(tournament);
 });
 
 //@desc Actualizar torneo
 //@route PUT /api/torneos/{id}
-//@access Private
+//@access Private ADMIN
 const updateTorneo = asyncHandler(async (req, res) => {
   const tournament = Tournament.findById(req.params.id);
 
@@ -70,6 +99,7 @@ const updateTorneo = asyncHandler(async (req, res) => {
 
   // Make sure the logged in user is an admin
   if (!req.user.admin) {
+    console.log(`El usuario ${req.user.name} no está autorizado`);
     res.status(401);
     throw new Error("User not authorized");
   }
