@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { createPrediction } = require("../controllers/predictionController");
+const { updatePrediccion } = require("../controllers/predictionController");
 
 const { protect } = require("../middleware/authMiddleware");
 
-router.route("/").post(protect, createPrediction);
-// router.route("/:id").put(protect, updateTeam);
+// router.route("/").post(protect, createPrediction);
+router.route("/:id").put(protect, updatePrediccion);
 
 module.exports = router;

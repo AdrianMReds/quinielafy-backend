@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Quiniela = require("../models/quinielaModel");
+const Tournament = require("../models/tournamentModel");
+const Prediction = require("../models/predictionModel");
 
 const uniqueId = () => {
   const dateString = Date.now().toString(36);
@@ -63,30 +65,63 @@ const createQuiniela = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  if (!req.body.name) {
+  const { name, entranceMoney, tournament } = req.body;
+
+  if (!name) {
     res.status(400);
     throw new Error("Agrega un nombre a la quiniela");
   }
-  if (!req.body.entranceMoney) {
+  if (!entranceMoney) {
     res.status(400);
     throw new Error("Agregué un monto de entrada");
   }
+  if (!tournament) {
+    res.status(400);
+    throw new Error("Agregué un torneo");
+  }
 
-  //Check for user
-  if (!req.user) {
-    res.status(401);
-    throw new Error("User not found");
+  const checkTournament = await Tournament.findById(tournament);
+  if (!checkTournament) {
+    res.status(400);
+    throw new Error("El torneo agregado no existe");
   }
 
   const quinielaid = uniqueId();
 
   const quiniela = await Quiniela.create({
-    name: req.body.name,
-    entranceMoney: req.body.entranceMoney,
+    name,
+    entranceMoney,
+    currentJornada: 1,
     entranceCode: quinielaid,
-    admin: req.user.id,
     users: [req.user.id],
+    admin: req.user.id,
+    tournament,
   });
+
+  // Obtener la lista de partidos del torneo asociado a la quiniela
+  const matches = checkTournament.matches;
+
+  console.log(`Tournament matches -> ${matches}`);
+
+  // Crear predicciones para cada partido y asignarlas al usuario
+  const predictions = matches.map((match) => ({
+    user: req.user.id,
+    quiniela: quiniela.id,
+    match,
+    predictedResult: {
+      team1: -1,
+      team2: -1,
+    },
+    modifiable: true,
+  }));
+
+  // Almacenar las predicciones en la base de datos
+  const createdPredictions = await Prediction.create(predictions);
+
+  // Asignar las predicciones a la lista de predictions de la quiniela
+  quiniela.predictions = createdPredictions.map((prediction) => prediction.id);
+  await quiniela.save();
+
   res.status(200).json(quiniela);
 });
 

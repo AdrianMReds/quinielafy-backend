@@ -7,6 +7,11 @@ const predictionSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    quiniela: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Quiniela",
+      required: true,
+    },
     match: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Match",
@@ -21,6 +26,10 @@ const predictionSchema = mongoose.Schema(
         type: Number,
         required: true,
       },
+    },
+    modifiable: {
+      type: Boolean,
+      required: true,
     },
   },
   { timestamps: true }

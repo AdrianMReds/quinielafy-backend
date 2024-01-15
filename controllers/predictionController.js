@@ -1,33 +1,31 @@
 const asyncHandler = require("express-async-handler");
 const Prediction = require("../models/predictionModel");
 
-//@desc Crear predicción
-//@route POST /api/predicciones
+//Prediction no tiene un POST porque se crean cuando se crea la quiniela o cuando alguien entra a la quiniela
+
+//@desc Actualizar prediccion
+//@route PUT /api/predicciones/{id}
 //@access Private
-const createPrediction = asyncHandler(async (req, res) => {
+const updatePrediccion = asyncHandler(async (req, res) => {
+  const prediction = await Prediction.findById(req.params.id);
+
+  if (!prediction) {
+    res.status(400);
+    throw new Error("No se encontró esa predicción");
+  }
+
   //Check for user
   if (!req.user) {
     res.status(401);
     throw new Error("User not found");
   }
 
-  const { match, predictedResult } = req.body;
-
-  if (!match) {
-    res.status(400);
-    throw new Error("Por favor proporciona un partido");
-  }
-  if (!predictedResult) {
-    res.status(400);
-    throw new Error("Por favor proporciona una predicción");
-  }
-
-  const prediction = await Prediction.create({
-    user: req.user._id,
-    match,
-    predictedResult,
-  });
-  res.status(200).json(prediction);
+  const prediccionActualizada = await Prediction.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+  res.status(200).json(prediccionActualizada);
 });
 
-module.exports = { createPrediction };
+module.exports = { updatePrediccion };
