@@ -55,8 +55,14 @@ const getQuinielaData = asyncHandler(async (req, res) => {
 
 //@desc Crear quiniela
 //@route POST /api/quinielas
-//@access Public
+//@access Private
 const createQuiniela = asyncHandler(async (req, res) => {
+  //Check for user
+  if (!req.user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
   if (!req.body.name) {
     res.status(400);
     throw new Error("Agrega un nombre a la quiniela");
@@ -88,7 +94,7 @@ const createQuiniela = asyncHandler(async (req, res) => {
 //@route PUT /api/quinielas/{id}
 //@access Private
 const updateQuiniela = asyncHandler(async (req, res) => {
-  const quiniela = Quiniela.findById(req.params.id);
+  const quiniela = await Quiniela.findById(req.params.id);
 
   if (!quiniela) {
     res.status(400);

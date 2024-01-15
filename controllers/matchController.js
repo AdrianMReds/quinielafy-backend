@@ -59,7 +59,7 @@ const createMatch = asyncHandler(async (req, res) => {
 //@route PUT /api/partidos/{id}
 //@access Private ADMIN
 const updateMatch = asyncHandler(async (req, res) => {
-  const match = Match.findById(req.params.id);
+  const match = await Match.findById(req.params.id);
 
   if (!match) {
     res.status(400);
