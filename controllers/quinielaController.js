@@ -31,7 +31,9 @@ const getQuinielas = asyncHandler(async (req, res) => {
 
   const quinielas = await Quiniela.find({
     users: { $in: [req.user.id] },
-  }).populate("tournament");
+  })
+    .populate("tournament")
+    .populate("predictions");
 
   res.status(200).json(quinielas);
 });
@@ -40,7 +42,16 @@ const getQuinielas = asyncHandler(async (req, res) => {
 //@route GET /api/quinielas/{id}
 //@access Private
 const getQuinielaData = asyncHandler(async (req, res) => {
-  const quiniela = await Quiniela.findById(req.params.id).exec();
+  const quiniela = await Quiniela.findById(req.params.id)
+    .populate("predictions")
+    .populate({
+      path: "predictions",
+      populate: {
+        path: "match",
+        populate: [{ path: "team1" }, { path: "team2" }],
+      },
+    })
+    .exec();
 
   if (!quiniela) {
     res.status(400);
