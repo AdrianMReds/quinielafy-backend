@@ -89,10 +89,10 @@ const createQuiniela = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Agrega un nombre a la quiniela");
   }
-  if (!entranceMoney) {
-    res.status(400);
-    throw new Error("Agregué un monto de entrada");
-  }
+  // if (!entranceMoney) {
+  //   res.status(400);
+  //   throw new Error("Agregué un monto de entrada");
+  // }
   if (!tournament) {
     res.status(400);
     throw new Error("Agregué un torneo");
@@ -108,7 +108,7 @@ const createQuiniela = asyncHandler(async (req, res) => {
 
   const quiniela = await Quiniela.create({
     name,
-    entranceMoney,
+    entranceMoney: entranceMoney ?? 0,
     currentJornada: 1,
     entranceCode: quinielaid,
     users: [req.user.id],
