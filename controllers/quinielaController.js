@@ -174,9 +174,37 @@ const updateQuiniela = asyncHandler(async (req, res) => {
   res.status(200).json(quinielaActualizada);
 });
 
+//@desc Eliminar quiniela
+//@route DELETE /api/quinielas/:id
+//@access Private
+const deleteQuiniela = asyncHandler(async (req, res) => {
+  const quiniela = await Quiniela.findById(req.params.id);
+
+  if (!quiniela) {
+    res.status(404);
+    throw new Error("Quiniela no encontrada");
+  }
+
+  // Check if the logged in user is authorized to delete this quiniela
+  if (quiniela.admin.toString() !== req.user.id) {
+    res.status(401);
+    throw new Error("Usuario no autorizado para eliminar esta quiniela");
+  }
+
+  const deletedQuiniela = await Quiniela.deleteOne({ _id: req.params.id });
+
+  if (deletedQuiniela.deletedCount === 1) {
+    res.status(200).json({ message: "Quiniela eliminada correctamente" });
+  } else {
+    res.status(500);
+    throw new Error("Error al eliminar la quiniela");
+  }
+});
+
 module.exports = {
   getQuinielas,
   createQuiniela,
   updateQuiniela,
   getQuinielaData,
+  deleteQuiniela,
 };
