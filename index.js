@@ -20,6 +20,7 @@ app.use("/api/quinielas", require("./routes/quinielaRoutes"));
 app.use("/api/torneos", require("./routes/tournamentRoutes"));
 app.use("/api/partidos", require("./routes/matchRoutes"));
 app.use("/api/equipos", require("./routes/teamRoutes"));
+app.use("/api/admin", require("./routes/adminRoutes"));
 
 app.use(errorHandler);
 
