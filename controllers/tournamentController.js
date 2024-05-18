@@ -79,6 +79,7 @@ const createTournament = asyncHandler(async (req, res) => {
     teams: teams,
     matches: matches ?? [],
     results: results ?? [],
+    amountOfGames: teams.length - 1,
   });
   res.status(200).json(tournament);
 });

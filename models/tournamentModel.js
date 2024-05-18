@@ -30,6 +30,10 @@ const tournamentSchema = mongoose.Schema(
         ref: "Team",
       },
     ],
+    amountOfGames: {
+      type: Number,
+      required: [true, "Por favor define una cantidad de partidos"],
+    },
   },
   { timestamps: true }
 );
